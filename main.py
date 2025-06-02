@@ -1,22 +1,16 @@
-
+from binance.client import Client
 import os
-import time
 
-API_KEY = os.getenv("BINANCE_API_KEY")
-API_SECRET = os.getenv("BINANCE_API_SECRET")
+api_key = os.getenv("BINANCE_API_KEY")
+api_secret = os.getenv("BINANCE_API_SECRET")
+client = Client(api_key, api_secret)
 
-def iniciar_jarvis():
-    print("✅ [DEBUG] Robô ProMax JARVIS Turbo iniciado.")
-    print(f"🔑 API_KEY presente: {bool(API_KEY)}")
-    print("📊 Verificando status da IA...")
+# Pega saldo total estimado em USDT
+conta = client.get_account()
+total_usdt = sum(float(asset['free']) * float(client.get_symbol_ticker(symbol=asset['asset'] + 'USDT')['price'])
+                 for asset in conta['balances']
+                 if asset['asset'] not in ['USDT', ''] and float(asset['free']) > 0)
 
-    while True:
-        print("🔄 [DEBUG] Loop de execução ativo...")
-        print("📈 [DEBUG] Estratégia ativa: Fibonacci + RSI + IA")
-        print("💡 [DEBUG] Score IA: 92.7")
-        print("💰 [DEBUG] Saldo atual: R$ 302.50")
-        print("📤 [DEBUG] Enviando alerta para Telegram...")
-        time.sleep(10)
-
-if __name__ == "__main__":
-    iniciar_jarvis()
+# Exibe saldo estimado
+banca = round(total_usdt, 2)
+print(f"[DEBUG] Saldo atual: ${banca}")
